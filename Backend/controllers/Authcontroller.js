@@ -1,6 +1,7 @@
 const {body, validationResult} = require('express-validator');
 const bcrypt = require('bcrypt');
 const User = require("../models/Users");
+const jwt = require('jsonwebtoken');
 
 exports.PostSignup = [
     body('username')
@@ -52,7 +53,7 @@ exports.PostSignup = [
         const {username, email, password, role} = req.body;
         const user = await User.findOne({email})
         if(user){
-         return res.status(401).json({ error: "User with this email already exist." });    
+         return res.status(409).json({ error: "User with this email already exist." });    
         }
         bcrypt.hash(password, 10, (error, hashedPassword)=>{
             if(error){
@@ -85,12 +86,24 @@ exports.PostLogin = async (req, res, next) => {
     if(!isMatch){
         return res.status(401).json({ error: "Invalid email or password" });
     }
+    const token = jwt.sign(
+    {
+        id: user._id,
+        username: user.username,
+        role: user.role
+    },
+    process.env.JWT_SECRET,
+    {
+        expiresIn: "7d"
+    }
+);
     res.status(200).json(
-        { message: "Login successful",
+        { message: "Login successful",token,
         user:{
+        id: user._id,
         username: user.username,
         email: user.email,
-        usertype: user.usertype
+        usertype: user.role
     }}
     );
 }
