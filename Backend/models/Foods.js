@@ -1,4 +1,4 @@
-const mongoose = require('momgoose');
+const mongoose = require('mongoose');
 
 const foodSchema = new mongoose.Schema({
   name: {
@@ -9,7 +9,7 @@ const foodSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  Category: {
+  category: {
     type: String,
     enum: ["Breakfast", "Main", "Soup", "Dessert", "Snacks", "Drinks", "Salads"],
     required: true
@@ -25,4 +25,4 @@ const foodSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Users', userSchema);
+module.exports = mongoose.model('Foods', foodSchema);
