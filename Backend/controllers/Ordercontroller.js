@@ -3,7 +3,19 @@ const Food = require('../models/Foods');
 
 exports.CreateOrder = async (req, res) => {
   try {
-    const { items, deliveryAddress, paymentMethod } = req.body;
+     await Order.create({
+      customerId: req.user.id,
+      items: req.body.items,
+      quantity: req.body.quantity,
+      deliveryAddress: req.body.deliveryAddress,
+      paymentMethod: req.body.paymentMethod,
+      createdAt: req.body.createdAt
+    })}
+   catch(err){
+      return res.status(500).json({message: "Couldn't create order."})
+   }};
+  
+     
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: 'At least one item is required.' });
