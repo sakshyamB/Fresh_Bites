@@ -3,21 +3,9 @@ const Food = require('../models/Foods');
 
 exports.CreateOrder = async (req, res) => {
   try {
-     await Order.create({
-      customerId: req.user.id,
-      items: req.body.items,
-      quantity: req.body.quantity,
-      deliveryAddress: req.body.deliveryAddress,
-      paymentMethod: req.body.paymentMethod,
-      createdAt: req.body.createdAt
-    })}
-   catch(err){
-      return res.status(500).json({message: "Couldn't create order."})
-   }};
-  
-     
+  const { items, deliveryAddress, paymentMethod } = req.body;
 
-    if (!items || !Array.isArray(items) || items.length === 0) {
+    if (!items || items.length === 0) {
       return res.status(400).json({ message: 'At least one item is required.' });
     }
 
@@ -25,19 +13,21 @@ exports.CreateOrder = async (req, res) => {
       return res.status(400).json({ message: 'Delivery address and payment method are required.' });
     }
 
+       if (quantity <= 0) {
+      return res.status(400).json({ message: 'Quantity should be more than 0.' });
+    }
+
     let subtotal = 0;
     const orderItems = [];
 
-    for (const item of items) {
+    for (const item of items) { 
       const food = await Food.findById(item.food);
       if (!food) {
-        return res.status(404).json({ message: `Food not found: ${item.food}` });
+        return res.status(404).json({ message: "Food not found." });
       }
-
       const quantity = Number(item.quantity || 1);
       const price = Number(food.price);
       subtotal += price * quantity;
-
       orderItems.push({
         food: food._id,
         name: food.name,
@@ -46,7 +36,7 @@ exports.CreateOrder = async (req, res) => {
       });
     }
 
-    const deliveryCharge = subtotal > 0 ? 50 : 0;
+    const deliveryCharge = subtotal > 1000 ? 0 : 100;
     const grandTotal = subtotal + deliveryCharge;
 
     const order = await Order.create({
@@ -58,21 +48,31 @@ exports.CreateOrder = async (req, res) => {
       deliveryAddress,
       paymentMethod
     });
-
-    return res.status(201).json({ message: 'Order created successfully.', data: order });
+  
+    return res.status(201).json({ message: 'Order created successfully.'});
   } catch (error) {
-    return res.status(500).json({ message: 'Could not create order.', error: error.message });
+    return res.status(500).json({ message: 'Could not create order.'});
   }
 };
 
-exports.GetAllOrders = async (req, res) => {
+exports.GetMyOrders = async (req, res) => {
   try {
     const orders = await Order.find({ customerId: req.user.id }).sort({ createdAt: -1 });
-    return res.status(200).json({ message: 'Orders fetched successfully.', data: orders });
+    return res.status(200).json({ message: 'Your orders are fetched successfully.', orders });
   } catch (error) {
     return res.status(500).json({ message: 'Could not fetch orders.', error: error.message });
   }
 };
+
+exports.GetAllOrders = async (req,res)=>{
+try{
+  const orders = await Order.find().sort({ createdAt: -1 });
+  return res.status(200).json({ message: 'All orders fetched successfully.', orders });
+}
+catch (error) {
+  return res.status(500).json({ message: 'Could not fetch orders.', error: error.message });
+}
+}
 
 exports.GetOrderById = async (req, res) => {
   try {
