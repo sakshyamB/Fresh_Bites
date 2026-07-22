@@ -4,15 +4,18 @@ const { connectDB } = require("./db/db");
 const authRoutes = require("./routes/authRoutes");
 const foodRoutes = require("./routes/foodRoutes");
 const orderRoutes = require("./routes/orderRoutes");
-const authMiddleware = require("./middleware/authmiddleware");
-const roleMiddleware = require("./middleware/rolemiddleware");
+const cors = require('cors');
+
 dotenv.config();
 
 const app = express();
 
+app.use(cors({
+  origin: "http://localhost:5173"
+}))
+
 app.use(express.json());
-app.use(authMiddleware);
-app.use(roleMiddleware);
+
 connectDB();
 
 app.use("/auth", authRoutes);
@@ -21,5 +24,5 @@ app.use('/orders', orderRoutes);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port http://localhost:${PORT}`)
 });

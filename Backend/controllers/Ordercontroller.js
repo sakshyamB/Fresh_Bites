@@ -13,19 +13,21 @@ exports.CreateOrder = async (req, res) => {
       return res.status(400).json({ message: 'Delivery address and payment method are required.' });
     }
 
-       if (quantity <= 0) {
-      return res.status(400).json({ message: 'Quantity should be more than 0.' });
-    }
-
     let subtotal = 0;
     const orderItems = [];
 
     for (const item of items) { 
       const food = await Food.findById(item.food);
+
       if (!food) {
         return res.status(404).json({ message: "Food not found." });
       }
+
       const quantity = Number(item.quantity || 1);
+      if (quantity <= 0) {
+      return res.status(400).json({ message: 'Quantity should be more than 0.' });
+       }
+
       const price = Number(food.price);
       subtotal += price * quantity;
       orderItems.push({
@@ -51,7 +53,8 @@ exports.CreateOrder = async (req, res) => {
   
     return res.status(201).json({ message: 'Order created successfully.'});
   } catch (error) {
-    return res.status(500).json({ message: 'Could not create order.'});
+    console.error(error);
+    return res.status(500).json({ message: 'Could not create order.', error: error.message});
   }
 };
 

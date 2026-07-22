@@ -5,8 +5,8 @@ const roleMiddleware = require('../middleware/roleMiddleware')
 
 const foodRoutes = express.Router();
 
-foodRoutes.post('/foods', authMiddleware, roleMiddleware, Foodcontroller.AddFoods);
-foodRoutes.get('/foods', Foodcontroller.GetAllFoods);
+foodRoutes.post('/add', authMiddleware, roleMiddleware, Foodcontroller.AddFoods);
+foodRoutes.get('/getfoods', Foodcontroller.GetAllFoods);
 foodRoutes.get('/foods/:id', Foodcontroller.GetFoodsById);
 foodRoutes.put('/foods/:id', authMiddleware, roleMiddleware, Foodcontroller.UpdateFoods);
 foodRoutes.delete('/foods/:id', authMiddleware, roleMiddleware, Foodcontroller.DeleteFoods);

@@ -30,8 +30,10 @@ exports.PostSignup = [
     .withMessage('Please confirm your password')
     .custom((value, {req})=>{
         if( value !== req.body.password){
-            throw Error ('Password and confirm password did not  matched');
-        }}),
+            throw new Error ('Password and confirm password did not  matched');
+        }
+    return true;
+    }),
 
     body('role')
     .notEmpty()
@@ -42,10 +44,13 @@ exports.PostSignup = [
     body('terms&conditions')
     .custom ((value)=>{
         if(!value){
-            throw Error ("Please accept our terms and conditions first.");
-        }}),
+            throw new Error ("Please accept our terms and conditions first.");
+        }
+        return true;
+    }),
 
     async (req,res,next)=>{
+        console.log(req.body);
         const errors = validationResult(req);
         if(!errors.isEmpty()){
         return res.status(400).json({errors: errors.array()});
