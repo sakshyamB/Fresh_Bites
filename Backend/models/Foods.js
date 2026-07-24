@@ -26,6 +26,10 @@ const foodSchema = new mongoose.Schema({
     type: String,
     enum: ["veg", "non-veg"],
     required: true
+  },
+    description: {
+    type: String,
+    required: true
   }
 });
 

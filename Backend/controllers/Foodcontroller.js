@@ -7,7 +7,8 @@ const foods = require('../models/Foods')
     price: req.body.price,
     category: req.body.category,
     image: req.body.image,
-    type: req.body.type
+    type: req.body.type,
+    description: req.body.description
     })
     return res.status(201).json({message: "Foods Added sucessfully."})
   }
@@ -23,7 +24,8 @@ const foods = require('../models/Foods')
     price: req.body.price,
     category: req.body.category,
     image: req.body.image,
-    type: req.body.type
+    type: req.body.type,
+    description: req.body.description
         })
         return res.status(200).json({message: "Foods updated sucessfully."})
     }
