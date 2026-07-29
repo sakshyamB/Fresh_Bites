@@ -3,7 +3,7 @@ import Cart from "./Cart";
 
 const CartPanel = ({ cartItems, subtotal, deliveryFee, grandTotal, onClose, onIncrease, onDecrease, onRemove, onPlaceOrder }) => (
   <div className="fixed inset-0 z-50 bg-slate-900/50" onClick={onClose}>
-    <div className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-white shadow-2xl" onClick={(event) => event.stopPropagation()}>
+    <div className="absolute inset-0 flex h-full w-full flex-col bg-white shadow-2xl sm:absolute sm:right-0 sm:top-0 sm:max-w-md sm:inset-auto" onClick={(event) => event.stopPropagation()}>
       <div className="flex items-center justify-between border-b border-slate-200 bg-emerald-50 p-4">
         <div>
           <h2 className="text-xl font-bold text-slate-900">Your cart</h2>
