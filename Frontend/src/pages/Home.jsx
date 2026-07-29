@@ -6,31 +6,17 @@ import HeroSection from "../Components/HeroSection";
 import CategoryTabs from "../Components/CategoryTabs";
 import FoodGrid from "../Components/FoodGrid";
 import CartPanel from "../Components/CartPanel";
+import Food from "../Components/Food";
 
 const Home = () => {
   const [foods, setFoods] = useState([]);
   const [search, setSearch] = useState("");
+  const [profile, setprofile] = useState(false);
   const [selected, setSelected] = useState("All");
   const [showCart, setShowCart] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchFoods = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get("http://localhost:3001/food/getfoods");
-        setFoods(response.data.data);
-      } catch {
-        setError("Unable to load food items.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFoods();
-  }, []);
 
   const filter = (categoryName) => {
     setSearch("");
@@ -65,19 +51,19 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#f0fdf4,#ffffff_55%)] text-slate-800">
-      <Nav Search={search} setSearch={setSearch} setcart={setShowCart} cartCount={cartItems.length} />
+      <Nav Search={search} setSearch={setSearch} setprofile={setprofile} setcart={setShowCart} cartCount={cartItems.length} />
 
       <main className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 md:px-6 lg:px-8">
         <HeroSection />
 
         <section className="rounded-4xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">
           <div className="mb-4">
-            <h3 className="text-xl font-semibold text-slate-900">Explore by category</h3>
-            <p className="text-sm text-slate-500">Choose a favorite and keep browsing.</p>
+            <h3 className="text-xl font-semibold text-slate-900">Choose your favourite category.</h3>
           </div>
           <CategoryTabs categories={Categories} selected={selected} onSelect={filter} />
         </section>
 
+<Food/>
         <section className="rounded-4xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">
           {loading ? (
             <div className="flex min-h-60 items-center justify-center rounded-2xl bg-slate-50 text-center">
