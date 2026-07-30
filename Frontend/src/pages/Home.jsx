@@ -4,7 +4,6 @@ import Nav from "../Components/Nav";
 import Categories from "../Category";
 import HeroSection from "../Components/HeroSection";
 import CategoryTabs from "../Components/CategoryTabs";
-import FoodGrid from "../Components/FoodGrid";
 import CartPanel from "../Components/CartPanel";
 import Food from "../Components/Food";
 
@@ -63,30 +62,7 @@ const Home = () => {
           <CategoryTabs categories={Categories} selected={selected} onSelect={filter} />
         </section>
 
-<Food/>
-        <section className="rounded-4xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">
-          {loading ? (
-            <div className="flex min-h-60 items-center justify-center rounded-2xl bg-slate-50 text-center">
-              <div>
-                <h2 className="text-xl font-semibold text-slate-900">Loading food items...</h2>
-                <p className="mt-2 text-sm text-slate-500">Fetching the latest favorites.</p>
-              </div>
-            </div>
-          ) : error ? (
-            <div className="flex min-h-60 items-center justify-center rounded-2xl bg-rose-50 text-center">
-              <h2 className="text-xl font-semibold text-rose-700">{error}</h2>
-            </div>
-          ) : !searchedFood.length ? (
-            <div className="flex min-h-60 items-center justify-center rounded-2xl bg-slate-50 text-center">
-              <div>
-                <h2 className="text-xl font-semibold text-slate-900">Nothing matches right now</h2>
-                <p className="mt-2 text-sm text-slate-500">Try another category or search term.</p>
-              </div>
-            </div>
-          ) : (
-            <FoodGrid items={searchedFood} onAdd={addToCart} />
-          )}
-        </section>
+          <Food/>
       </main>
 
       {showCart && (

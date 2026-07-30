@@ -1,11 +1,13 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useCart } from "../context/CartContext";
 
 const Food = () => {
   const [food, setFood] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchFoods = async () => {
@@ -23,7 +25,7 @@ const Food = () => {
   }, [])
 
   if (loading) {
-    return <p>Foods are loading.</p>
+    return <p>Foods are loading...</p>
   }
 
   if (error) {
@@ -69,8 +71,10 @@ const Food = () => {
                     {item.description || "A delicious choice made with fresh ingredients."}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-gray-900">${item.price}</span>
-                    <button className="rounded-full bg-green-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-600">
+                    <span className="text-lg font-bold text-gray-900">Rs{item.price}</span>
+                    <button 
+                    onclick={() => addToCart(item)}
+                    className="rounded-full bg-green-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-600">
                       Add to cart
                     </button>
                   </div>

@@ -18,7 +18,7 @@ const HeroSection = () => (
           <p className="text-sm text-slate-500">Daily specials</p>
         </div>
         <div className="rounded-xl bg-white p-3 shadow-sm">
-          <p className="text-xl font-bold text-emerald-600 sm:text-2xl">4.9</p>
+          <p className="text-xl font-bold text-emerald-600 sm:text-2xl">4.8</p>
           <p className="text-sm text-slate-500">Rated by guests</p>
         </div>
       </div>
