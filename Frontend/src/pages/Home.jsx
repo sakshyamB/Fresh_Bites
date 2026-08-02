@@ -1,83 +1,60 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import Nav from "../Components/Nav";
 import Categories from "../Category";
 import HeroSection from "../Components/HeroSection";
 import CategoryTabs from "../Components/CategoryTabs";
-import CartPanel from "../Components/CartPanel";
 import Food from "../Components/Food";
+import CartPanel from "../Components/CartPanel";
 
 const Home = () => {
-  const [foods, setFoods] = useState([]);
   const [search, setSearch] = useState("");
-  const [profile, setprofile] = useState(false);
+  const [profile, setProfile] = useState(false);
   const [selected, setSelected] = useState("All");
   const [showCart, setShowCart] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const hasActiveSearch = search.trim() !== "";
 
   const filter = (categoryName) => {
     setSearch("");
     setSelected(categoryName);
   };
 
-  const filteredFood = selected === "All" ? foods : foods.filter((item) => item.category === selected);
-  const searchedFood = filteredFood.filter((item) => item.name.toLowerCase().includes(search.toLowerCase()));
-
-  const addToCart = (food) => {
-    const itemId = food._id ?? food.id;
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === itemId);
-      if (existing) return prev.map((item) => (item.id === itemId ? { ...item, qty: item.qty + 1 } : item));
-
-      return [...prev, { id: itemId, name: food.name, price: food.price, image: food.image, qty: 1 }];
-    });
-  };
-
-  const increaseQty = (id) => setCartItems((prev) => prev.map((item) => (item.id === id ? { ...item, qty: item.qty + 1 } : item)));
-  const decreaseQty = (id) => setCartItems((prev) => prev.map((item) => (item.id === id ? { ...item, qty: Math.max(1, item.qty - 1) } : item)));
-  const removeItem = (id) => setCartItems((prev) => prev.filter((item) => item.id !== id));
-  const placeOrder = () => {
-    alert("Order placed successfully 🎉");
-    setCartItems([]);
-    setShowCart(false);
-  };
-
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
-  const deliveryFee = cartItems.length > 0 ? 50 : 0;
-  const grandTotal = subtotal + deliveryFee;
-
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#f0fdf4,#ffffff_55%)] text-slate-800">
-      <Nav Search={search} setSearch={setSearch} setprofile={setprofile} setcart={setShowCart} cartCount={cartItems.length} />
+    <div className="app-shell">
+      <Nav
+        Search={search}
+        setSearch={setSearch}
+        setprofile={setProfile}
+        setcart={setShowCart}
+      />
 
-      <main className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 md:px-6 lg:px-8">
-        <HeroSection />
+      <main className="mx-auto flex max-w-7xl flex-col gap-4 px-3 py-4 sm:px-5 sm:py-6 lg:px-8 lg:py-8">
+        {!hasActiveSearch && <HeroSection />}
 
-        <section className="rounded-4xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">
-          <div className="mb-4">
-            <h3 className="text-xl font-semibold text-slate-900">Choose your favourite category.</h3>
-          </div>
-          <CategoryTabs categories={Categories} selected={selected} onSelect={filter} />
-        </section>
+        {!hasActiveSearch && (
+          <section className="panel p-4 sm:p-6">
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-md font-bold uppercase text-[#c2410c] md:text-sm">
+                  Menu
+                </p>
+                <p className="mt-1 text-sm font-semibold text-[#f97316]">
+                  Choose your desired category.
+                </p>
+              </div>
+            </div>
+            <CategoryTabs
+              categories={Categories}
+              selected={selected}
+              onSelect={filter}
+            />
+          </section>
+        )}
 
-          <Food/>
+        <Food selectedCategory={selected} search={search} />
       </main>
 
-      {showCart && (
-        <CartPanel
-          cartItems={cartItems}
-          subtotal={subtotal}
-          deliveryFee={deliveryFee}
-          grandTotal={grandTotal}
-          onClose={() => setShowCart(false)}
-          onIncrease={increaseQty}
-          onDecrease={decreaseQty}
-          onRemove={removeItem}
-          onPlaceOrder={placeOrder}
-        />
-      )}
+      {showCart && <CartPanel onClose={() => setShowCart(false)} />}
     </div>
   );
 };

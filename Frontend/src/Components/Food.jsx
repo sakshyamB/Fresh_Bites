@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useCart } from "../context/CartContext";
 
-const Food = () => {
+const Food = ({ selectedCategory, search }) => {
   const [food, setFood] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -24,68 +24,77 @@ const Food = () => {
     fetchFoods()
   }, [])
 
+  const normalizedSearch = search?.trim().toLowerCase() || ''
+
+  const visibleFood = food.filter((item) => {
+    const matchesCategory =
+      selectedCategory === 'All' || item.category === selectedCategory
+
+    const matchesSearch =
+      normalizedSearch === '' ||
+      item.name?.toLowerCase().includes(normalizedSearch) ||
+      item.description?.toLowerCase().includes(normalizedSearch)
+
+    return matchesCategory && matchesSearch
+  })
+
   if (loading) {
-    return <p>Foods are loading...</p>
+    return <p className="panel-soft p-6 text-sm text-slate-600">Foods are loading...</p>
   }
 
   if (error) {
-    return <p>Foods could not be loaded.</p>
+    return <p className="panel-soft p-6 text-sm text-slate-600">Foods could not be loaded.</p>
   }
 
   return (
-    <section className="px-4 py-6 md:px-8 md:py-8">
-      {food.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-8 text-center shadow-sm">
-          <p className="text-gray-500">No food items available yet.</p>
+    <section>
+      {visibleFood.length === 0 ? (
+        <div className="panel-soft p-8 text-center text-sm text-slate-500">
+          No food items match your current selection.
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {food.map((item) => {
-            return (
-              <article
-                key={item._id}
-                className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="overflow-hidden bg-slate-100">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="h-52 w-full object-cover transition duration-300 group-hover:scale-105"
-                  />
-                </div>
-                <div className="space-y-3 p-5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900">{item.name}</h3>
-                      <p className="text-sm text-gray-500">{item.category}</p>
-                    </div>
-                    {item.type === "veg" ? (
-                      <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                        {item.type}
-                      </span>) :
-                      (<span className="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
-                        {item.type}
-                      </span>)}
+          {visibleFood.map((item) => (
+            <article key={item._id} className="card overflow-hidden">
+              <div className="bg-[#fff3e6]">
+                <img src={item.image} alt={item.name} className="h-48 w-full object-cover" />
+              </div>
+              <div className="space-y-3 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900">{item.name}</h3>
+                    <p className="text-sm text-slate-500">{item.category}</p>
                   </div>
-                  <p className="text-sm leading-6 text-gray-600">
-                    {item.description || "A delicious choice made with fresh ingredients."}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-gray-900">Rs{item.price}</span>
-                    <button 
-                    onclick={() => addToCart(item)}
-                    className="rounded-full bg-green-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-600">
-                      Add to cart
-                    </button>
-                  </div>
+                  {item.type === "veg" ? (
+                    <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-semibold uppercase text-emerald-700">
+                      {item.type}
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-rose-100 px-2.5 py-1 text-[11px] font-semibold uppercase text-rose-700">
+                      {item.type}
+                    </span>
+                  )}
                 </div>
-              </article>
-            )
-          })}
+                <p className="text-sm leading-6 text-slate-600">
+                  {item.description || "A delicious choice made with fresh ingredients."}
+                </p>
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-base font-semibold text-[#c2410c]">Rs. {item.price}</span>
+                  <button
+                    type="button"
+                    onClick={() => addToCart(item)}
+                    className="rounded-full bg-[#f97316] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#ea580c]"
+                  >
+                    Add to cart
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       )}
     </section>
   )
 }
 
-export default Food  
+export default Food
