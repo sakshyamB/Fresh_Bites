@@ -7,7 +7,7 @@ const CartDrawer = ({ open, onClose, cartItems, increase, decrease, remove, subt
   return (
     <div className="fixed inset-0 z-50 flex bg-black/30">
       <div className="ml-auto flex h-full w-full max-w-md flex-col bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-slate-200 p-4 bg-emerald-50">
+        <div className="flex items-center justify-between border-b border-[#f3dcbc] bg-[#fff6ea] p-4">
           <h2 className="text-xl font-bold text-slate-900">Your Cart</h2>
           <button type="button" onClick={onClose} className="text-xl">❌</button>
         </div>
@@ -16,7 +16,7 @@ const CartDrawer = ({ open, onClose, cartItems, increase, decrease, remove, subt
           <Cart cart={cartItems} increase={increase} decrease={decrease} remove={remove} />
         </div>
 
-        <div className="space-y-3 border-t border-slate-200 p-4">
+        <div className="space-y-3 border-t border-[#f3dcbc] p-4">
           <div className="flex justify-between text-sm text-slate-600">
             <span>Subtotal</span>
             <span>Rs. {subtotal}</span>
@@ -34,7 +34,7 @@ const CartDrawer = ({ open, onClose, cartItems, increase, decrease, remove, subt
             disabled={cartItems.length === 0}
             onClick={onPlaceOrder}
             className={`w-full rounded-3xl px-4 py-3 text-sm font-semibold text-white transition ${
-              cartItems.length === 0 ? "bg-slate-300 cursor-not-allowed" : "bg-emerald-500 hover:bg-emerald-600"
+              cartItems.length === 0 ? "bg-slate-300 cursor-not-allowed" : "bg-[#f97316] hover:bg-[#ea580c]"
             }`}
           >
             Place Order
