@@ -25,7 +25,7 @@ exports.PostSignup = [
     .isLength({ min: 8 })
     .withMessage('Password must be at least 8 characters long'),
 
-    body('c-password')
+    body('confirmPassword')
     .notEmpty()
     .withMessage('Please confirm your password')
     .custom((value, {req})=>{
@@ -41,7 +41,7 @@ exports.PostSignup = [
     .isIn(['user', 'admin'])
     .withMessage("Role should be either admin or user."),
 
-    body('terms&conditions')
+    body('termsANDconditions')
     .custom ((value)=>{
         if(!value){
             throw new Error ("Please accept our terms and conditions first.");
@@ -55,7 +55,7 @@ exports.PostSignup = [
         if(!errors.isEmpty()){
         return res.status(400).json({errors: errors.array()});
         }
-        const {username, email, password, role} = req.body;
+        const {username, email, password, role, termsANDconditions} = req.body;
         const user = await User.findOne({email})
         if(user){
          return res.status(409).json({ error: "User with this email already exist." });    
@@ -68,6 +68,7 @@ exports.PostSignup = [
                 username,
                 email,
                 role,
+                termsANDconditions,
                 password: hashedPassword
             });
             newUser.save()
