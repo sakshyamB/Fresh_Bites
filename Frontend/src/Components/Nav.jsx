@@ -5,8 +5,9 @@ import { FaShoppingCart } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 import { useCart } from "../context/CartContext";
 
-const Nav = ({ Search, setSearch, setcart, setprofile }) => {
+const Nav = ({ Search, setSearch, setcart,profile, setprofile }) => {
   const { cartCount } = useCart();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   return (
     <header className="sticky top-0 z-20 w-full border-b border-[#f3dcbc] bg-[#fffaf3]/95 backdrop-blur">
@@ -44,13 +45,32 @@ const Nav = ({ Search, setSearch, setcart, setprofile }) => {
               </span>
             )}
           </button>
-          <button
-            type="button"
-            onClick={() => setprofile(true)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#f3dcbc] bg-[#ffedd5] text-[#c2410c] shadow-sm sm:h-11 sm:w-11"
-          >
-            <FaUser className="h-4 w-4 sm:h-5 sm:w-5" />
-          </button>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setprofile(!profile)}
+              className="inline-flex h-10 w-10  items-center justify-center rounded-xl border border-[#f3dcbc] bg-[#ffedd5] text-[#c2410c] shadow-sm sm:h-11 sm:w-11"
+            >
+              <FaUser className="h-4 w-4 sm:h-5 sm:w-5" />
+            </button>
+            {profile && (
+              <div className="absolute right-0 top-14 w-56 rounded-xl bg-white shadow-lg border">
+                <div className="px-4 py-3 border-b">
+                  <p className="font-semibold">
+                    Hello, {user?.username}
+                  </p>
+                </div>
+
+                <button className="w-full px-4 py-3 text-left hover:bg-gray-100">
+                  My Orders
+                </button>
+
+                <button className="w-full px-4 py-3 text-left text-red-500 hover:bg-red-50">
+                   Logout
+                </button>
+              </div>
+          )}
+        </div>
         </div>
       </div>
     </header>

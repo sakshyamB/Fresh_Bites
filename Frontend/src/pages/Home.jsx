@@ -8,7 +8,7 @@ import CartPanel from "../Components/CartPanel";
 
 const Home = () => {
   const [search, setSearch] = useState("");
-  const [profile, setProfile] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [selected, setSelected] = useState("All");
   const [showCart, setShowCart] = useState(false);
 
@@ -24,7 +24,8 @@ const Home = () => {
       <Nav
         Search={search}
         setSearch={setSearch}
-        setprofile={setProfile}
+        profile={showProfile}
+        setprofile={setShowProfile}
         setcart={setShowCart}
       />
 
