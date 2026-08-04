@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from "axios";
-import {Link, useNavigate} from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -15,48 +14,54 @@ const Signup = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [termsANDconditions, setTermsANDconditions] = useState(false);
   const [role, setRole] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    setError("");
+    setSuccess("");
+    e.preventDefault();
 
-  try {
-    const res = await axios.post(
-      "http://localhost:3001/auth/signup",
-      {
-        username,
-        email,
-        password,
-        confirmPassword,
-        role,
-        termsANDconditions,
-      }
-    );
+    try {
+      const res = await axios.post(
+        "http://localhost:3001/auth/signup",
+        {
+          username,
+          email,
+          password,
+          confirmPassword,
+          role,
+          termsANDconditions,
+        }
+      );
 
-    console.log(res.data.message);
+      setSuccess(res.data.message || "Account created successfully!");
 
-    setUsername("");
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-    setRole("");
-    setTermsANDconditions(false);
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setRole("");
+      setTermsANDconditions(false);
 
-    navigate('/login')
+      navigate('/login')
 
-  } catch (err) {
-    if (err.response) {
-      console.log(err.response.data);
-
-      if (err.response.data.errors) {
-        alert(err.response.data.errors[0].msg);
+    } catch (err) {
+      if (err.response) {
+        if (err.response.data.errors) {
+          setError(err.response.data.errors[0].msg);
+        } else if (err.response.data.message) {
+          setError(err.response.data.message);
+        } else if (err.response.data.error) {
+          setError(err.response.data.error);
+        } else {
+          setError("Signup failed.");
+        }
       } else {
-        alert(err.response.data.error);
+        setError("Server is not responding.");
       }
-    } else {
-      alert("Server is not responding.");
     }
-  }
-};
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-rose-100 px-4">
@@ -150,6 +155,18 @@ const handleSubmit = async (e) => {
               I agree to the <Link to="/terms" className="text-blue-500 underline">terms</Link> and <Link to="/conditions" className="text-blue-500 underline">conditions</Link>
             </label>
           </div>
+
+          {error && (
+            <div className="rounded-md bg-red-100 border border-red-300 px-4 py-2 text-sm text-red-700">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="rounded-md bg-green-100 border border-green-300 px-4 py-2 text-sm text-green-700">
+              {success}
+            </div>
+          )}
 
           <button
             type="submit"

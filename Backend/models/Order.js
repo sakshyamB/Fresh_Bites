@@ -6,6 +6,16 @@ const orderSchema = new mongoose.Schema({
     ref: 'Users',
     required: true
   },
+  fullName: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+    trim: true
+  },
   items: [
     {
       food: {
@@ -32,6 +42,11 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  discount: {
+    type: Number,
+    required: true,
+    default: 0
+  },
   deliveryCharge: {
     type: Number,
     required: true,
@@ -45,15 +60,25 @@ const orderSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  paymentMethod: {
+    type: String,
+    enum: ['Cash on Delivery', 'E-sewa', 'Khalti', 'Mobile Banking'],
+    required: true
+  },
+  promoCode: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  notes: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   status: {
     type: String,
     enum: ['Pending', 'Processing', 'Out for Delivery', 'Delivered', 'Cancelled'],
     default: 'Pending'
-  },
-  paymentMethod: {
-    type: String,
-    enum: ['Cash on Delivery', 'Card', 'Mobile Banking', 'E-sewa', 'Khalti'],
-    required: true
   },
   createdAt: {
     type: Date,

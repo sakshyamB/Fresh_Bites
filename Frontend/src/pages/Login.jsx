@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
+import axios from "axios";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import {Link} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [termsANDconditions, settermsANDconditions] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("")
+
+  const navigate = useNavigate();
+
 
   const handleemailChange = (e) => {
     setemail(e.target.value);
@@ -16,9 +21,38 @@ const Login = () => {
     setpassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    setError("");
+    setSuccess('');
     e.preventDefault();
-    console.log('Login submitted:', { email, password });
+    try {
+      const res = await axios.post("http://localhost:3001/auth/login", {
+        email,
+        password
+      }
+      )
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem('user', res.data.user);
+      setSuccess(res.data.message || "Logged in succesfully");
+      setemail("");
+      setpassword("");
+      navigate('/');
+    }
+    catch (err) {
+      if (err.response) {
+        if (err.response.data.errors) {
+          setError(err.response.data.errors[0].msg);
+        } else if (err.response.data.message) {
+          setError(err.response.data.message);
+        } else if (err.response.data.error) {
+          setError(err.response.data.error);
+        } else {
+          setError("Login failed.");
+        }
+      } else {
+        setError("Server is not responding.");
+      }
+    }
   };
 
   return (
@@ -57,12 +91,19 @@ const Login = () => {
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
-          <p>
-            <input type="checkbox" id="terms" value={termsANDconditions} className="mr-2" required />
-            <label htmlFor="terms">
-              I agree to the <Link to="/terms" className="text-blue-500 underline">terms</Link> and <Link to="/conditions" className="text-blue-500 underline">conditions</Link>
-            </label>
-          </p>
+
+          {error && (
+            <div className='rounded-md bg-red-100 border border-red-300 px-4 py-2 text-sm text-red-700'>
+              {error}
+            </div>
+          )
+          }
+          {success && (
+            <div className='rounded-md bg-green-100 border border-green-300 px-4 py-2 text-sm text-green-700'>
+              {success}
+            </div>
+          )
+          }
           <button
             type="submit"
             className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
