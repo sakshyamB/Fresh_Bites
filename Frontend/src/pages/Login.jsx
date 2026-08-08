@@ -32,7 +32,7 @@ const Login = () => {
       }
       )
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem('user', res.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       setSuccess(res.data.message || "Logged in succesfully");
       setemail("");
       setpassword("");

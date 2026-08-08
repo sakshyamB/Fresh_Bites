@@ -4,10 +4,32 @@ import { IoSearch } from "react-icons/io5";
 import { FaShoppingCart } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 import { useCart } from "../context/CartContext";
+import {Link, Navigate, useNavigate} from 'react-router-dom'
 
-const Nav = ({ Search, setSearch, setcart,profile, setprofile }) => {
+const Nav = ({ Search, setSearch, setcart, profile, setprofile }) => {
   const { cartCount } = useCart();
-  const user = JSON.parse(localStorage.getItem("user"));
+
+  const Navigate = useNavigate();
+
+  const getUserFromStorage = () => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) return null;
+
+    try {
+      return JSON.parse(storedUser);
+    } catch (error) {
+      console.warn("Invalid user data in localStorage, clearing it:", storedUser, error);
+      localStorage.removeItem("user");
+      return null;
+    }
+  };
+
+  const user = getUserFromStorage();
+
+  const Logout = async () =>{
+    await sessionStorage.clear();
+    Navigate('/logout');
+  }
 
   return (
     <header className="sticky top-0 z-20 w-full border-b border-[#f3dcbc] bg-[#fffaf3]/95 backdrop-blur">
@@ -61,12 +83,14 @@ const Nav = ({ Search, setSearch, setcart,profile, setprofile }) => {
                   </p>
                 </div>
 
-                <button className="w-full px-4 py-3 text-left hover:bg-gray-100">
-                  My Orders
+                <button className="w-full border-b px-4 py-3 text-left hover:bg-gray-100">
+                  <Link to="/order"> My Orders </Link>
                 </button>
 
-                <button className="w-full px-4 py-3 text-left text-red-500 hover:bg-red-50">
-                   Logout
+                <button
+                onClick={LogOut()}
+                className="w-full px-4 py-3 text-left text-red-500 hover:bg-red-50">
+                  Logout 
                 </button>
               </div>
           )}
