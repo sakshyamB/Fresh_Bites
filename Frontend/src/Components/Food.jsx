@@ -53,17 +53,17 @@ const Food = ({ selectedCategory, search }) => {
           No food items match your current selection.
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3">
           {visibleFood.map((item) => (
             <article key={item._id} className="card overflow-hidden">
               <div className="bg-[#fff3e6]">
-                <img src={item.image} alt={item.name} className="h-48 w-full object-cover" />
+                <img src={item.image} alt={item.name} className="h-36 w-full object-cover" />
               </div>
-              <div className="space-y-3 p-4">
+              <div className="space-y-2 p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900">{item.name}</h3>
-                    <p className="text-sm text-slate-500">{item.category}</p>
+                    <h3 className="text-base font-semibold text-slate-900">{item.name}</h3>
+                    <p className="text-xs text-slate-500">{item.category}</p>
                   </div>
                   {item.type === "veg" ? (
                     <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-semibold uppercase text-emerald-700">
@@ -75,17 +75,17 @@ const Food = ({ selectedCategory, search }) => {
                     </span>
                   )}
                 </div>
-                <p className="text-sm leading-6 text-slate-600">
+                <p className="text-sm leading-5 text-slate-600">
                   {item.description || "A delicious choice made with fresh ingredients."}
                 </p>
                 <div className="flex items-center justify-between pt-1">
-                  <span className="text-base font-semibold text-[#c2410c]">Rs. {item.price}</span>
+                  <span className="text-sm font-semibold text-[#c2410c]">Rs. {item.price}</span>
                   <button
                     type="button"
                     onClick={() => addToCart(item)}
-                    className="rounded-full bg-[#f97316] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#ea580c]"
+                    className="rounded-full bg-[#f97316] px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-[#ea580c]"
                   >
-                    Add to cart
+                    Add
                   </button>
                 </div>
               </div>

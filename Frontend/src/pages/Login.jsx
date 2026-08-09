@@ -4,41 +4,46 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [email, setemail] = useState("");
-  const [password, setpassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("")
+  const [success, setSuccess] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
-
-  const handleemailChange = (e) => {
-    setemail(e.target.value);
-  };
-
-  const handlepasswordChange = (e) => {
-    setpassword(e.target.value);
-  };
-
   const handleSubmit = async (e) => {
-    setError("");
-    setSuccess('');
     e.preventDefault();
+    setError("");
+    setSuccess("");
+    setIsLoading(true);
+
     try {
       const res = await axios.post("http://localhost:3001/auth/login", {
         email,
-        password
-      }
-      )
+        password,
+      });
+
+      const userData = {
+        ...res.data.user,
+        role: res.data.user.role || res.data.user.usertype || "",
+      };
+
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      setSuccess(res.data.message || "Logged in succesfully");
-      setemail("");
-      setpassword("");
-      navigate('/');
-    }
-    catch (err) {
+      localStorage.setItem("user", JSON.stringify(userData));
+      setSuccess(res.data.message || "Logged in successfully");
+      setEmail("");
+      setPassword("");
+
+      const normalizedRole = String(userData.role || "").toLowerCase();
+      if (normalizedRole === "admin") {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
+
+    } catch (err) {
       if (err.response) {
         if (err.response.data.errors) {
           setError(err.response.data.errors[0].msg);
@@ -52,6 +57,8 @@ const Login = () => {
       } else {
         setError("Server is not responding.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,7 +75,7 @@ const Login = () => {
             type="email"
             name="email"
             value={email}
-            onChange={handleemailChange}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             className="border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
@@ -78,7 +85,7 @@ const Login = () => {
               type={showPassword ? "text" : "password"}
               name="password"
               value={password}
-              onChange={handlepasswordChange}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               className="w-full border border-gray-300 rounded-md py-2 px-4 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -106,9 +113,10 @@ const Login = () => {
           }
           <button
             type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={isLoading}
+            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
           >
-            Log In
+            {isLoading ? "Logging in..." : "Log In"}
           </button>
           <p className="text-sm text-gray-600">
             Doesn't have an account yet? <Link to="/signup" className="text-blue-500 underline">Sign up</Link>

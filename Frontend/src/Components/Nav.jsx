@@ -4,12 +4,11 @@ import { IoSearch } from "react-icons/io5";
 import { FaShoppingCart } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 import { useCart } from "../context/CartContext";
-import {Link, Navigate, useNavigate} from 'react-router-dom'
+import { Link, useNavigate } from "react-router-dom";
 
-const Nav = ({ Search, setSearch, setcart, profile, setprofile }) => {
+const Nav = ({ Search, setSearch, setcart, profile, setprofile, setlogoutpopup }) => {
   const { cartCount } = useCart();
-
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
   const getUserFromStorage = () => {
     const storedUser = localStorage.getItem("user");
@@ -18,18 +17,12 @@ const Nav = ({ Search, setSearch, setcart, profile, setprofile }) => {
     try {
       return JSON.parse(storedUser);
     } catch (error) {
-      console.warn("Invalid user data in localStorage, clearing it:", storedUser, error);
-      localStorage.removeItem("user");
+      console.log("Invalid user data in localStorage.");
       return null;
     }
   };
 
   const user = getUserFromStorage();
-
-  const Logout = async () =>{
-    await sessionStorage.clear();
-    Navigate('/logout');
-  }
 
   return (
     <header className="sticky top-0 z-20 w-full border-b border-[#f3dcbc] bg-[#fffaf3]/95 backdrop-blur">
@@ -71,30 +64,57 @@ const Nav = ({ Search, setSearch, setcart, profile, setprofile }) => {
             <button
               type="button"
               onClick={() => setprofile(!profile)}
-              className="inline-flex h-10 w-10  items-center justify-center rounded-xl border border-[#f3dcbc] bg-[#ffedd5] text-[#c2410c] shadow-sm sm:h-11 sm:w-11"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#f3dcbc] bg-[#ffedd5] text-[#c2410c] shadow-sm sm:h-11 sm:w-11"
             >
               <FaUser className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
             {profile && (
-              <div className="absolute right-0 top-14 w-56 rounded-xl bg-white shadow-lg border">
-                <div className="px-4 py-3 border-b">
+              <div className="absolute right-0 top-14 w-56 rounded-xl border border-slate-200 bg-white shadow-lg">
+                <div className="border-b px-4 py-3">
                   <p className="font-semibold">
-                    Hello, {user?.username}
+                    Hello, {user?.username || "there"}
                   </p>
                 </div>
 
-                <button className="w-full border-b px-4 py-3 text-left hover:bg-gray-100">
-                  <Link to="/order"> My Orders </Link>
-                </button>
+                {user ? (
+                  <>
+                    <Link
+                      to="/myorder"
+                      onClick={() => setprofile(false)}
+                      className="block w-full border-b px-4 py-3 text-left hover:bg-gray-100"
+                    >
+                      My Orders
+                    </Link>
 
-                <button
-                onClick={LogOut()}
-                className="w-full px-4 py-3 text-left text-red-500 hover:bg-red-50">
-                  Logout 
-                </button>
+                    <button
+                      type="button"
+                      onClick={()=> setlogoutpopup(true)}
+                      className="w-full px-4 py-3 text-left text-red-500 hover:bg-red-50"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <div className="px-4 py-3">
+                    <Link
+                      to="/login"
+                      onClick={() => setprofile(false)}
+                      className="block text-sm font-semibold text-orange-600"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      to="/signup"
+                      onClick={() => setprofile(false)}
+                      className="mt-2 block text-sm text-slate-600"
+                    >
+                      Create an account
+                    </Link>
+                  </div>
+                )}
               </div>
-          )}
-        </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

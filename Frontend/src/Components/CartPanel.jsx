@@ -3,7 +3,7 @@ import Cart from "./Cart";
 import CheckoutForm from "./CheckoutForm";
 import { useCart } from "../context/CartContext";
 
-const CartPanel = ({ onClose }) => {
+const CartPanel = ({ onClose, setOrderPlaced }) => {
    const [panel, setPanel] = useState("cart")
 
   const {
@@ -59,8 +59,9 @@ const CartPanel = ({ onClose }) => {
               grandTotal={grandTotal}
               onCancel={() => setPanel("cart")}
               onPlaceOrder={() => {
-              clearCart();
-              onClose();
+                clearCart();
+                onClose();
+                if (typeof setOrderPlaced === "function") setOrderPlaced(true);
               }}
             />
           )}

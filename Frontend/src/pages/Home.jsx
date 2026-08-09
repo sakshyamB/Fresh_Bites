@@ -5,12 +5,16 @@ import HeroSection from "../Components/HeroSection";
 import CategoryTabs from "../Components/CategoryTabs";
 import Food from "../Components/Food";
 import CartPanel from "../Components/CartPanel";
+import Logoutpopup from "../Components/Logoutpopup";
+import OrderPlacedPopup from "../Components/OrderPlacedPopup";
 
 const Home = () => {
   const [search, setSearch] = useState("");
   const [showProfile, setShowProfile] = useState(false);
   const [selected, setSelected] = useState("All");
   const [showCart, setShowCart] = useState(false);
+  const [logoutpopup, setlogoutpopup] = useState(false)
+  const [orderPlaced, setOrderPlaced] = useState(false)
 
   const hasActiveSearch = search.trim() !== "";
 
@@ -27,6 +31,7 @@ const Home = () => {
         profile={showProfile}
         setprofile={setShowProfile}
         setcart={setShowCart}
+        setlogoutpopup={setlogoutpopup}
       />
 
       <main className="mx-auto flex max-w-7xl flex-col gap-4 px-3 py-4 sm:px-5 sm:py-6 lg:px-8 lg:py-8">
@@ -55,7 +60,18 @@ const Home = () => {
         <Food selectedCategory={selected} search={search} />
       </main>
 
-      {showCart && <CartPanel onClose={() => setShowCart(false)} />}
+      {showCart && (
+        <CartPanel onClose={() => setShowCart(false)} setOrderPlaced={setOrderPlaced} />
+      )}
+      {orderPlaced && (
+        <OrderPlacedPopup onClose={() => setOrderPlaced(false)} />
+      )}
+      {logoutpopup && (
+        <Logoutpopup
+          setLogoutpopup={setlogoutpopup}
+          setprofile={setShowProfile}
+        />
+      )}
     </div>
   );
 };
