@@ -6,8 +6,6 @@ import CategoryTabs from "../Components/CategoryTabs";
 import Food from "../Components/Food";
 import CartPanel from "../Components/CartPanel";
 import Logoutpopup from "../Components/Logoutpopup";
-import OrderPlacedPopup from "../Components/OrderPlacedPopup";
-
 const Home = () => {
   const [search, setSearch] = useState("");
   const [showProfile, setShowProfile] = useState(false);
@@ -63,9 +61,7 @@ const Home = () => {
       {showCart && (
         <CartPanel onClose={() => setShowCart(false)} setOrderPlaced={setOrderPlaced} />
       )}
-      {orderPlaced && (
-        <OrderPlacedPopup onClose={() => setOrderPlaced(false)} />
-      )}
+ 
       {logoutpopup && (
         <Logoutpopup
           setLogoutpopup={setlogoutpopup}

@@ -1,0 +1,118 @@
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+
+const EditMenu = ({ item, onClose, onSaved }) => {
+  const [form, setForm] = useState({
+    name: '',
+    price: '',
+    category: '',
+    image: '',
+    type: 'veg',
+    description: ''
+  })
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    if (item) {
+      setForm({
+        name: item.name || '',
+        price: item.price || '',
+        category: item.category || '',
+        image: item.image || '',
+        type: item.type || 'veg',
+        description: item.description || ''
+      })
+    }
+  }, [item])
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setForm(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!item) return
+    setSaving(true)
+    setError(null)
+    try {
+      const payload = {
+        name: form.name,
+        price: Number(form.price),
+        category: form.category,
+        image: form.image,
+        type: form.type,
+        description: form.description
+      }
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:3001/food/foods/${item._id}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+      onSaved && onSaved()
+      onClose && onClose()
+    }
+    catch (err) {
+      setError(err.response?.data?.message || err.message || 'Failed to update')
+    }
+    finally {
+      setSaving(false)
+    }
+  }
+
+  if (!item) return null
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg w-full max-w-xl p-6">
+        <h2 className="text-xl font-semibold mb-4">Edit Food</h2>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <input name="name" value={form.name} onChange={handleChange} className="mt-1 block w-full border rounded p-2" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Price</label>
+              <input name="price" type="number" value={form.price} onChange={handleChange} className="mt-1 block w-full border rounded p-2" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Category</label>
+              <input name="category" value={form.category} onChange={handleChange} className="mt-1 block w-full border rounded p-2" />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Image URL</label>
+            <input name="image" value={form.image} onChange={handleChange} className="mt-1 block w-full border rounded p-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Type</label>
+            <select name="type" value={form.type} onChange={handleChange} className="mt-1 block w-40 border rounded p-2">
+              <option value="veg">veg</option>
+              <option value="non-veg">non-veg</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Description</label>
+            <textarea name="description" value={form.description} onChange={handleChange} className="mt-1 block w-full border rounded p-2" rows={3} />
+          </div>
+
+          {error && (<div className="text-sm text-red-600">{error}</div>)}
+
+          <div className="flex justify-end gap-3">
+            <button type="button" onClick={onClose} className="px-4 py-2 rounded border">Cancel</button>
+            <button type="submit" disabled={saving} className="px-4 py-2 rounded bg-orange-500 text-white">{saving ? 'Saving...' : 'Save'}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+export default EditMenu
