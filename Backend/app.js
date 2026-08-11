@@ -4,6 +4,7 @@ const { connectDB } = require("./db/db");
 const authRoutes = require("./routes/authRoutes");
 const foodRoutes = require("./routes/foodRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const promoRoutes = require('./routes/promoRoutes');
 const cors = require('cors');
 
 dotenv.config();
@@ -21,6 +22,7 @@ connectDB();
 app.use("/auth", authRoutes);
 app.use('/food', foodRoutes)
 app.use('/orders', orderRoutes);
+app.use('/promos', promoRoutes);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

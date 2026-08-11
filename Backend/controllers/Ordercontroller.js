@@ -1,5 +1,6 @@
 const Order = require('../models/Order');
 const Food = require('../models/Foods');
+const Promo = require('../models/Promo');
 
 exports.CreateOrder = async (req, res) => {
   try {
@@ -56,8 +57,13 @@ exports.CreateOrder = async (req, res) => {
     let discount = 0;
     const normalizedPromo = promoCode?.trim().toUpperCase();
 
-    if (normalizedPromo === 'FOOD10' || normalizedPromo === 'SAVE10') {
-      discount = Math.round(subtotal * 0.1);
+    if (normalizedPromo) {
+      const promo = await Promo.findOne({ code: normalizedPromo, active: true });
+      if (promo) {
+        if (subtotal >= Number(promo.minSubtotal || 0)) {
+          discount = Math.round(subtotal * (Number(promo.discountPercentage) / 100));
+        }
+      }
     }
 
     const grandTotal = subtotal + deliveryCharge - discount;

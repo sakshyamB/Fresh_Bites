@@ -112,7 +112,7 @@ const Order = () => {
                     </div>
 
                     <div className="overflow-x-auto pb-2">
-                      <div className="flex min-w-[560px] items-start">
+                      <div className="flex min-w-140 items-start">
                         {statuses.map((status, i) => (
                           <div key={status} className="flex flex-1 items-start">
                             <div className="flex flex-col items-center">

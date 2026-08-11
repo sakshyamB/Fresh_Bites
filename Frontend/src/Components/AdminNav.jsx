@@ -116,6 +116,14 @@ const AdminNav = ({ setlogoutpopup }) => {
 
               <button
                 type="button"
+                onClick={() => handleNavigation("/promos")}
+                className="rounded-xl border px-4 py-3 text-left font-medium text-gray-700 transition hover:bg-orange-50 hover:text-orange-600"
+              >
+                Promo codes
+              </button>            
+
+              <button
+                type="button"
                 onClick={() => setlogoutpopup(true)}
                 className="mt-4 border rounded-xl px-4 py-3 text-left font-medium text-red-500 transition hover:bg-red-50"
               >
