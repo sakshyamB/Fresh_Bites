@@ -69,7 +69,7 @@ const EditMenu = ({ item, onClose, onSaved }) => {
   if (!item) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-[#fff3e3] bg-opacity-40 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-xl p-6">
         <h2 className="text-xl font-semibold mb-4">Edit Food</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -83,8 +83,15 @@ const EditMenu = ({ item, onClose, onSaved }) => {
               <input name="price" type="number" value={form.price} onChange={handleChange} className="mt-1 block w-full border rounded p-2" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Category</label>
-              <input name="category" value={form.category} onChange={handleChange} className="mt-1 block w-full border rounded p-2" />
+            <label className='block text-sm font-medium text-gray-700'>Category</label>
+            <select name='category' value={form.category} onChange={handleChange} className='mt-1 block w-40 border rounded p-2'>
+              <option value="Breakfast">Breakfast</option>
+              <option value="Main">Main</option>
+              <option value="Dessert">Dessert</option>
+              <option value="Soup">Soup</option>
+              <option value="Drinks">Drinks</option>
+              <option value="Salads">Salads</option>
+            </select>
             </div>
           </div>
           <div>

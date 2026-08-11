@@ -3,6 +3,7 @@ import AdminNav from '../Components/AdminNav'
 import Logoutpopup from '../Components/Logoutpopup'
 import axios from 'axios'
 import EditMenu from '../Components/EditMenu'
+import AddMenu from '../Components/AddMenu'
 
 const Menu = () => {
   const [logoutpopup, setlogoutpopup] = useState(false);
@@ -10,9 +11,10 @@ const Menu = () => {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
   const [editingItem, setEditingItem] = useState(null)
+  const [showAddModal, setShowAddModal] = useState(false)
 
   useEffect(() => {
-    fetchAllfoods()
+    fetchAllfoods();
   }, [])
 
   const fetchAllfoods = async () => {
@@ -33,7 +35,15 @@ const Menu = () => {
     <div className='min-h-screen bg-linear-to-br from-[#fffaf3] to-[#fff3e3]'>
       <AdminNav setlogoutpopup={setlogoutpopup} />
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className='text-3xl font-semibold text-gray-800 mb-6'>Menu</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className='text-3xl font-semibold text-gray-800'>Menu</h1>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="rounded-2xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600"
+          >
+            Add Food
+          </button>
+        </div>
 
         {loading ? (
           <div className="text-center p-4 bg-white rounded-md shadow-sm">Loading foods...</div>
@@ -70,6 +80,10 @@ const Menu = () => {
 
       {editingItem && (
         <EditMenu item={editingItem} onClose={() => setEditingItem(null)} onSaved={() => fetchAllfoods()} />
+      )}
+
+      {showAddModal && (
+        <AddMenu onClose={() => setShowAddModal(false)} onSaved={() => fetchAllfoods()} />
       )}
 
     </div>

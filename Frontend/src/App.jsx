@@ -7,6 +7,7 @@ import MyOrder from './pages/MyOrder'
 import Order from './pages/Order';
 import Menu from './pages/Menu';
 import Statistics from './pages/Statistics';
+import Promos from './pages/Promos';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
       <Route path='/dashboard' element={<Order/>}/>
       <Route path='/menu' element={<Menu/>}/>
       <Route path='/stats' element={<Statistics/>}/>
+      <Route path='/promos' element={<Promos/>}/>
     </Routes>
     </div>
   );
