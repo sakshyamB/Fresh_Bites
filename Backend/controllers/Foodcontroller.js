@@ -1,6 +1,24 @@
 const foods = require('../models/Foods')
+const cloudinary = require('cloudinary').v2
 
- exports.AddFoods = async (req,res) => {
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
+
+const deleteCloudinaryImage = async (imageUrl) => {
+  if (!imageUrl || !imageUrl.includes('cloudinary.com')) return
+
+  try {
+    const publicId = imageUrl.split('/').slice(-2).join('/').split('.')[0]
+    await cloudinary.uploader.destroy(publicId)
+  } catch (error) {
+    console.error('Cloudinary delete failed:', error.message)
+  }
+}
+
+exports.AddFoods = async (req,res) => {
   try {
     await foods.create({
     name: req.body.name,
@@ -36,6 +54,13 @@ const foods = require('../models/Foods')
 
  exports.DeleteFoods = async (req,res) =>{
     try {
+        const foodItem = await foods.findById(req.params.id)
+
+        if (!foodItem) {
+            return res.status(404).json({ message: "Food not found." })
+        }
+
+        await deleteCloudinaryImage(foodItem.image)
         await foods.findByIdAndDelete(req.params.id)
         return res.status(200).json({message: "Food deleted sucessfully."})
     }

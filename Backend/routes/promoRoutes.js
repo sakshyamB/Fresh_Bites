@@ -7,5 +7,6 @@ const router = express.Router();
 
 router.post('/create', authMiddleware, roleMiddleware, promoController.CreatePromo);
 router.get('/all', authMiddleware, roleMiddleware, promoController.GetAllPromos);
+router.delete('/promos/:id', authMiddleware, roleMiddleware, promoController.DeletePromos);
 
 module.exports = router;

@@ -6,6 +6,7 @@ import CategoryTabs from "../Components/CategoryTabs";
 import Food from "../Components/Food";
 import CartPanel from "../Components/CartPanel";
 import Logoutpopup from "../Components/Logoutpopup";
+
 const Home = () => {
   const [search, setSearch] = useState("");
   const [showProfile, setShowProfile] = useState(false);
