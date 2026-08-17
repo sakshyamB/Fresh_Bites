@@ -37,3 +37,12 @@ exports.GetAllPromos = async (req, res) => {
     return res.status(500).json({ message: 'Could not fetch promos.', error: error.message });
   }
 };
+
+exports.DeletePromos = async (req, res) => {
+  try {
+    await Promo.findByIdAndDelete(req.params.id)
+    return res.status(200).json({ message: 'Promo deleted successfully.' })
+  } catch (err) {
+    return res.status(500).json({ message: "Couldn't delete promo.", error: err.message })
+  }
+}

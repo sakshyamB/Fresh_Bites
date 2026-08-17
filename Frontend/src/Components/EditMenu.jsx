@@ -12,6 +12,7 @@ const EditMenu = ({ item, onClose, onSaved }) => {
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
 
   useEffect(() => {
     if (item) {
@@ -31,9 +32,49 @@ const EditMenu = ({ item, onClose, onSaved }) => {
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
+  const uploadImageToCloudinary = async (file) => {
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+
+    if (!cloudName || !uploadPreset) {
+      throw new Error('Cloudinary configuration is missing.')
+    }
+
+    const data = new FormData()
+    data.append('file', file)
+    data.append('upload_preset', uploadPreset)
+
+    const response = await axios.post(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      data
+    )
+
+    return response.data.secure_url
+  }
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    try {
+      setUploadingImage(true)
+      setError(null)
+      const uploadedUrl = await uploadImageToCloudinary(file)
+      setForm(prev => ({ ...prev, image: uploadedUrl }))
+    } catch (err) {
+      setError(err.response?.data?.error?.message || err.message || 'Image upload failed.')
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!item) return
+    if (!form.image) {
+      setError('Please upload an image first.')
+      return
+    }
     setSaving(true)
     setError(null)
     try {
@@ -95,8 +136,12 @@ const EditMenu = ({ item, onClose, onSaved }) => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Image URL</label>
-            <input name="image" value={form.image} onChange={handleChange} className="mt-1 block w-full border rounded p-2" />
+            <label className="block text-sm font-medium text-gray-700">Image</label>
+            <input type="file" accept="image/*" onChange={handleImageChange} className="mt-1 block w-full border rounded p-2" />
+            {uploadingImage && <p className="mt-1 text-xs text-orange-600">Uploading image...</p>}
+            {form.image && (
+              <img src={form.image} alt="Current preview" className="mt-2 h-20 w-20 rounded object-cover border" />
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Type</label>

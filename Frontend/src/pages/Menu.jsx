@@ -24,10 +24,25 @@ const Menu = () => {
       setMenu(res.data.data || []);
     }
     catch (err) {
-      setError(err.response?.data?.message || err.message || "Couldn't fetch any foods.")
+      setError(err.message || "Couldn't fetch any foods.")
     }
     finally {
       setLoading(false);
+    }
+  }
+
+  const DeletingItem = async (item) => {
+    setLoading(true)
+    try {
+      const token = localStorage.getItem("token")
+      await axios.delete(`http://localhost:3001/food/foods/${item._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setMenu((prevMenu) => prevMenu.filter((menuItem) => menuItem._id !== item._id))
+    } catch (error) {
+      setError(error.message || "Couldn't delete food.")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -64,6 +79,7 @@ const Menu = () => {
                   <div className="mt-4 flex items-center justify-between">
                     <div className="text-lg font-bold text-gray-900">₹{item.price}</div>
                     <div className="flex items-center gap-2">
+                      <button onClick={()=> DeletingItem(item)} className='bg-rose-300 border px-3 py-1 rounded-lg hover:bg-rose-500'>Delete</button>
                       <button onClick={() => setEditingItem(item)} className="bg-white border px-3 py-1 rounded-lg hover:bg-gray-50">Edit</button>
                     </div>
                   </div>

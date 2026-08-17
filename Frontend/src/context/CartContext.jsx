@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-
+import toastr from "toastr";
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
@@ -20,6 +20,13 @@ export const CartProvider = ({ children }) => {
       }
 
       return [...prevCart, { ...food, quantity: 1 }];
+    });
+
+    toastr.success(`${food.name} added to cart!`, "Success", {
+      closeButton: true,
+      progressBar: true,
+      positionClass: "toast-top-right",
+      timeOut: 2500,
     });
   };
 
