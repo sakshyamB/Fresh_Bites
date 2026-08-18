@@ -20,18 +20,33 @@ const deleteCloudinaryImage = async (imageUrl) => {
 
 exports.AddFoods = async (req,res) => {
   try {
+    const { name, price, category, image, type, description } = req.body;
+
+    if (!name || !price || !category || !image || !type || !description) {
+      return res.status(400).json({ message: 'All food fields are required.' })
+    }
+
     await foods.create({
-    name: req.body.name,
-    price: req.body.price,
-    category: req.body.category,
-    image: req.body.image,
-    type: req.body.type,
-    description: req.body.description
+      name,
+      price,
+      category,
+      image,
+      type,
+      description
     })
-    return res.status(201).json({message: "Foods Added sucessfully."})
+
+    return res.status(201).json({ message: 'Foods Added successfully.' })
   }
-  catch(err){
-    return res.status(500).json({message: "Couldn't Add foods."})  
+  catch (err) {
+    console.error('AddFoods error:', err)
+
+    const validationMessage = err?.errors
+      ? Object.values(err.errors).map(error => error.message).join(', ')
+      : err.message
+
+    return res.status(500).json({
+      message: validationMessage || "Couldn't Add foods."
+    })
   }
  }
 
