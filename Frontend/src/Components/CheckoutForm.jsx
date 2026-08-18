@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import toastr from "toastr";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 
@@ -60,7 +61,14 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
                 }
             );
 
-            setMessage(response.data.message || "Order placed successfully.");
+            const successMessage = response.data.message || "Order placed successfully.";
+            setMessage(successMessage);
+            toastr.success(successMessage, "Order Placed", {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: 2500,
+            });
             clearCart();
             onPlaceOrder();
         } catch (err) {
