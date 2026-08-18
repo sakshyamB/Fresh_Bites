@@ -10,6 +10,7 @@ const statuses = [
 ];
 
 const Order = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -18,7 +19,7 @@ const Order = () => {
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem("token");
-        const { data } = await axios.get("http://localhost:3001/orders/my", {
+        const { data } = await axios.get(`${API_URL}/orders/my`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOrders(data.orders || []);

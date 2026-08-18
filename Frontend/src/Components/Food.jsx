@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useCart } from "../context/CartContext";
 
 const Food = ({ selectedCategory, search }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [food, setFood] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -12,7 +13,7 @@ const Food = ({ selectedCategory, search }) => {
   useEffect(() => {
     const fetchFoods = async () => {
       try {
-        const res = await axios.get('http://localhost:3001/food/getfoods')
+        const res = await axios.get(`${API_URL}/food/getfoods`)
         setFood(res.data.data || [])
       } catch (err) {
         setError(err)

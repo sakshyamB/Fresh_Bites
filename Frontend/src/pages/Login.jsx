@@ -4,6 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -20,7 +21,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:3001/auth/login", {
+      const res = await axios.post(`${API_URL}/auth/login`, {
         email,
         password,
       });

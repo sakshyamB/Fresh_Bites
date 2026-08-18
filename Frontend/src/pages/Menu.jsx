@@ -6,6 +6,7 @@ import EditMenu from '../Components/EditMenu'
 import AddMenu from '../Components/AddMenu'
 
 const Menu = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [logoutpopup, setlogoutpopup] = useState(false);
   const [menu, setMenu] = useState([])
   const [error, setError] = useState(null)
@@ -20,7 +21,7 @@ const Menu = () => {
   const fetchAllfoods = async () => {
     setLoading(true)
     try {
-      const res = await axios.get("http://localhost:3001/food/getfoods");
+      const res = await axios.get(`${API_URL}/food/getfoods`);
       setMenu(res.data.data || []);
     }
     catch (err) {
@@ -35,7 +36,7 @@ const Menu = () => {
     setLoading(true)
     try {
       const token = localStorage.getItem("token")
-      await axios.delete(`http://localhost:3001/food/foods/${item._id}`, {
+      await axios.delete(`${API_URL}/food/foods/${item._id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       setMenu((prevMenu) => prevMenu.filter((menuItem) => menuItem._id !== item._id))

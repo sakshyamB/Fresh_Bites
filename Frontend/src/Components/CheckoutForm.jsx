@@ -5,6 +5,7 @@ import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 
 const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder }) => {
+    const API_URL = import.meta.env.VITE_API_URL;
     const [fullName, setFullName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [deliveryAddress, setDeliveryAddress] = useState("");
@@ -41,7 +42,7 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
                 return;
             }
             const response = await axios.post(
-                "http://localhost:3001/orders/create",
+                `${API_URL}/orders/create`,
                 {
                     items: cart.map((item) => ({
                         food: item._id,

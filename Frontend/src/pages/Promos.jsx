@@ -5,6 +5,7 @@ import axios from 'axios'
 import AddPromos from '../Components/AddPromos'
 
 const Promos = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [promos, setPromos] = useState([])
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -20,7 +21,7 @@ const Promos = () => {
     setError(null)
     try {
       const token = localStorage.getItem('token')
-      const res = await axios.get('http://localhost:3001/promos/all', {
+      const res = await axios.get(`${API_URL}/promos/all`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       setPromos(res.data.promos || [])
@@ -35,7 +36,7 @@ const Promos = () => {
     setLoading(true)
     try {
       const token = localStorage.getItem('token')
-      await axios.delete(`http://localhost:3001/promos/promos/${item._id}`, {
+      await axios.delete(`${API_URL}/promos/promos/${item._id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       setPromos((prevPromos) => prevPromos.filter((promo) => promo._id !== item._id))

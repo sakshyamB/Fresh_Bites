@@ -10,6 +10,7 @@ const EditMenu = ({ item, onClose, onSaved }) => {
     type: 'veg',
     description: ''
   })
+  const API_URL = import.meta.env.VITE_API_URL;
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const [uploadingImage, setUploadingImage] = useState(false)
@@ -88,7 +89,7 @@ const EditMenu = ({ item, onClose, onSaved }) => {
       }
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:3001/food/foods/${item._id}`,
+        `${API_URL}/food/foods/${item._id}`,
         payload,
         {
           headers: {

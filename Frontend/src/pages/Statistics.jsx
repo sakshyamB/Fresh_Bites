@@ -4,6 +4,7 @@ import AdminNav from "../Components/AdminNav";
 import Logoutpopup from "../Components/Logoutpopup";
 
 const Statistics = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -14,7 +15,7 @@ const Statistics = () => {
       try {
         const token = localStorage.getItem("token");
         const { data } = await axios.get(
-          "http://localhost:3001/orders/all",
+          `${API_URL}/orders/all`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

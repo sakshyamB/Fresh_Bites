@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import axios from 'axios'
 
 const AddPromos = ({ onClose, onSaved }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [code, setCode] = useState('')
   const [discountPercentage, setDiscountPercentage] = useState('')
   const [minSubtotal, setMinSubtotal] = useState('')
@@ -17,7 +19,7 @@ const AddPromos = ({ onClose, onSaved }) => {
     try {
       const token = localStorage.getItem('token')
       await axios.post(
-        'http://localhost:3001/promos/create',
+        `${API_URL}/promos/create`,
         {
           code,
           discountPercentage: Number(discountPercentage),

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 
 const AddMenu = ({ onClose, onSaved }) => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [form, setForm] = useState({
     name: '',
     price: '',
@@ -67,7 +68,7 @@ const AddMenu = ({ onClose, onSaved }) => {
     try {
       const token = localStorage.getItem('token')
       await axios.post(
-        'http://localhost:3001/food/add',
+        `${API_URL}/food/add`,
         {
           name: form.name,
           price: Number(form.price),

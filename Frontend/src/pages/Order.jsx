@@ -14,6 +14,7 @@ const formatDate = (value) => {
 };
 
 const Order = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -27,7 +28,7 @@ const Order = () => {
         const token = localStorage.getItem("token");
 
         const { data } = await axios.get(
-          "http://localhost:3001/orders/all",
+          `${API_URL}/orders/all`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

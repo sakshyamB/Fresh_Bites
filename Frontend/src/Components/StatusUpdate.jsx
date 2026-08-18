@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const StatusUpdate = ({ setopenOrderStatus, orderId }) => {
+    const API_URL = import.meta.env.VITE_API_URL;
     const [status, setStatus] = useState("");
     const [isChanging, setIsChanging] = useState(false);
     const [error, setError] = useState("");
@@ -28,7 +29,7 @@ const StatusUpdate = ({ setopenOrderStatus, orderId }) => {
                 return;
             }
 
-            const response = await axios.put(`http://localhost:3001/orders/${orderId}/status`,
+            const response = await axios.put(`${API_URL}/orders/${orderId}/status`,
                 { status: status },
                 {
                     headers: {
