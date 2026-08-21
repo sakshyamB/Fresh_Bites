@@ -7,17 +7,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
-const deleteCloudinaryImage = async (imageUrl) => {
-  if (!imageUrl || !imageUrl.includes('cloudinary.com')) return
-
-  try {
-    const publicId = imageUrl.split('/').slice(-2).join('/').split('.')[0]
-    await cloudinary.uploader.destroy(publicId)
-  } catch (error) {
-    console.error('Cloudinary delete failed:', error.message)
-  }
-}
-
 exports.AddFoods = async (req,res) => {
   try {
     const { name, price, category, image, type, description } = req.body;
@@ -39,13 +28,8 @@ exports.AddFoods = async (req,res) => {
   }
   catch (err) {
     console.error('AddFoods error:', err)
-
-    const validationMessage = err?.errors
-      ? Object.values(err.errors).map(error => error.message).join(', ')
-      : err.message
-
     return res.status(500).json({
-      message: validationMessage || "Couldn't Add foods."
+      message: "Couldn't Add foods."
     })
   }
  }
@@ -59,8 +43,8 @@ exports.AddFoods = async (req,res) => {
     image: req.body.image,
     type: req.body.type,
     description: req.body.description
-        })
-        return res.status(200).json({message: "Foods updated sucessfully."})
+     })
+     return res.status(200).json({message: "Foods updated sucessfully."})
     }
     catch (err) {
         return res.status(500).json({message: "Couldn't update food."})
@@ -74,8 +58,6 @@ exports.AddFoods = async (req,res) => {
         if (!foodItem) {
             return res.status(404).json({ message: "Food not found." })
         }
-
-        await deleteCloudinaryImage(foodItem.image)
         await foods.findByIdAndDelete(req.params.id)
         return res.status(200).json({message: "Food deleted sucessfully."})
     }
