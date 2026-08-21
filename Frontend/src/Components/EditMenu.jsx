@@ -63,7 +63,7 @@ const EditMenu = ({ item, onClose, onSaved }) => {
       const uploadedUrl = await uploadImageToCloudinary(file)
       setForm(prev => ({ ...prev, image: uploadedUrl }))
     } catch (err) {
-      setError(err.response?.data?.error?.message || err.message || 'Image upload failed.')
+      setError(err.message || 'Image upload failed.')
     } finally {
       setUploadingImage(false)
     }
@@ -101,7 +101,7 @@ const EditMenu = ({ item, onClose, onSaved }) => {
       onClose && onClose()
     }
     catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to update')
+      setError(err.message || 'Failed to update')
     }
     finally {
       setSaving(false)
