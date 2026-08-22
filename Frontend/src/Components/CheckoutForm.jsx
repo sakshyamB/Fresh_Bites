@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder }) => {
     const API_URL = import.meta.env.VITE_API_URL;
+
     const [fullName, setFullName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [deliveryAddress, setDeliveryAddress] = useState("");
@@ -15,6 +16,8 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
     const { clearCart } = useCart();
     const navigate = useNavigate();
 
@@ -33,14 +36,16 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
             return;
         }
 
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            setShowLoginPrompt(true);
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                navigate("/login")
-                return;
-            }
             const response = await axios.post(
                 `${API_URL}/orders/create`,
                 {
@@ -62,30 +67,76 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
                 }
             );
 
-            const successMessage = response.data.message || "Order placed successfully.";
+            const successMessage =
+                response.data.message || "Order placed successfully.";
+
             setMessage(successMessage);
+
             toastr.success(successMessage, "Order Placed", {
                 closeButton: true,
                 progressBar: true,
                 positionClass: "toast-top-right",
                 timeOut: 2500,
             });
+
             clearCart();
             onPlaceOrder();
         } catch (err) {
             setError(
-                err.response?.data?.message || "Could not place order. Please try again."
+                err.response?.data?.message ||
+                    "Could not place order. Please try again."
             );
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    if (showLoginPrompt) {
+        return (
+            <div className="p-2">
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
+                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-orange-100">
+                        <span className="text-2xl">🔐</span>
+                    </div>
+
+                    <h2 className="text-xl font-bold text-slate-900">
+                        Please Login to Place an Order
+                    </h2>
+
+                    <p className="mt-2 text-sm text-slate-600">
+                        You need to be logged in before you can place your order.
+                    </p>
+
+                    <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                        <button
+                            type="button"
+                            onClick={() => navigate("/login")}
+                            className="w-full rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-orange-600 sm:w-auto"
+                        >
+                            Login
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={onCancel}
+                            className="w-full rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400 sm:w-auto"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <form onSubmit={handleSubmit} className="space-y-4 p-2">
             <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block">
-                    <span className="text-sm font-semibold text-slate-700">Full Name</span>
+                    <span className="text-sm font-semibold text-slate-700">
+                        Full Name
+                    </span>
+
                     <input
                         type="text"
                         value={fullName}
@@ -97,7 +148,10 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
                 </label>
 
                 <label className="block">
-                    <span className="text-sm font-semibold text-slate-700">Phone Number</span>
+                    <span className="text-sm font-semibold text-slate-700">
+                        Phone Number
+                    </span>
+
                     <input
                         type="tel"
                         value={phoneNumber}
@@ -110,7 +164,10 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
             </div>
 
             <label className="block">
-                <span className="text-sm font-semibold text-slate-700">Delivery Address</span>
+                <span className="text-sm font-semibold text-slate-700">
+                    Delivery Address
+                </span>
+
                 <textarea
                     value={deliveryAddress}
                     onChange={(e) => setDeliveryAddress(e.target.value)}
@@ -123,7 +180,10 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
 
             <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block">
-                    <span className="text-sm font-semibold text-slate-700">Mode of Payment</span>
+                    <span className="text-sm font-semibold text-slate-700">
+                        Mode of Payment
+                    </span>
+
                     <select
                         value={paymentMethod}
                         onChange={(e) => setPaymentMethod(e.target.value)}
@@ -137,7 +197,10 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
                 </label>
 
                 <label className="block">
-                    <span className="text-sm font-semibold text-slate-700">Promo Code</span>
+                    <span className="text-sm font-semibold text-slate-700">
+                        Promo Code
+                    </span>
+
                     <input
                         type="text"
                         value={promoCode}
@@ -149,7 +212,10 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
             </div>
 
             <label className="block">
-                <span className="text-sm font-semibold text-slate-700">Notes for Delivery</span>
+                <span className="text-sm font-semibold text-slate-700">
+                    Notes for Delivery
+                </span>
+
                 <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
@@ -160,15 +226,28 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
             </label>
 
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-                <p className="font-semibold text-slate-900">Order summary</p>
+                <p className="font-semibold text-slate-900">
+                    Order summary
+                </p>
+
                 <div className="mt-3 flex justify-between text-sm">
                     <span>Subtotal</span>
-                    <span>Rs. {cart.reduce((sum, item) => sum + item.price * item.quantity, 0)}</span>
+
+                    <span>
+                        Rs.{" "}
+                        {cart.reduce(
+                            (sum, item) =>
+                                sum + item.price * item.quantity,
+                            0
+                        )}
+                    </span>
                 </div>
+
                 <div className="mt-2 flex justify-between text-sm">
                     <span>Delivery fee</span>
                     <span>Rs. {deliveryFee}</span>
                 </div>
+
                 <div className="mt-2 flex justify-between text-sm font-semibold text-slate-900">
                     <span>Grand total</span>
                     <span>Rs. {grandTotal}</span>
@@ -176,12 +255,13 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
             </div>
 
             {error && (
-                <div className="rounded-md bg-red-100 border border-red-300 px-4 py-3 text-sm text-red-700">
+                <div className="rounded-md border border-red-300 bg-red-100 px-4 py-3 text-sm text-red-700">
                     {error}
                 </div>
             )}
+
             {message && (
-                <div className="rounded-md bg-green-100 border border-green-300 px-4 py-3 text-sm text-green-700">
+                <div className="rounded-md border border-green-300 bg-green-100 px-4 py-3 text-sm text-green-700">
                     {message}
                 </div>
             )}
@@ -194,6 +274,7 @@ const CheckoutForm = ({ cart, deliveryFee, grandTotal, onCancel, onPlaceOrder })
                 >
                     Back to cart
                 </button>
+
                 <button
                     type="submit"
                     disabled={isSubmitting}
