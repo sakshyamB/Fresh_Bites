@@ -18,6 +18,13 @@ const getUserRole = () => {
   }
 };
 
+const RequireAdmin = ({ children }) => {
+  const token = localStorage.getItem('token');
+  const isAdmin = getUserRole() === 'admin';
+
+  return token && isAdmin ? children : <Navigate to='/login' replace />;
+};
+
 const App = () => {
   const userRole = getUserRole();
   const isAdmin = userRole === 'admin';
@@ -29,10 +36,10 @@ const App = () => {
         <Route path='/login' element={<Login/>} />
         <Route path='/signup' element={<Signup/>} />
         <Route path='/myorder' element={<MyOrder/>} />
-        <Route path='/dashboard' element={<Order />} />
-        <Route path='/menu' element={<Menu/>} />
-        <Route path='/stats' element={<Statistics/>} />
-        <Route path='/promos' element={<Promos/>} />
+        <Route path='/dashboard' element={<RequireAdmin><Order /></RequireAdmin>} />
+        <Route path='/menu' element={<RequireAdmin><Menu /></RequireAdmin>} />
+        <Route path='/stats' element={<RequireAdmin><Statistics /></RequireAdmin>} />
+        <Route path='/promos' element={<RequireAdmin><Promos /></RequireAdmin>} />
       </Routes>
     </div>
   );
