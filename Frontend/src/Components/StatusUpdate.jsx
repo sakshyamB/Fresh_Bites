@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const StatusUpdate = ({ setopenOrderStatus, orderId }) => {
+const StatusUpdate = ({ setopenOrderStatus, orderId, onStatusUpdated }) => {
     const API_URL = import.meta.env.VITE_API_URL;
     const [status, setStatus] = useState("");
     const [isChanging, setIsChanging] = useState(false);
@@ -69,8 +69,8 @@ const StatusUpdate = ({ setopenOrderStatus, orderId }) => {
                         <button
                             onClick={() => {
                                 setopenOrderStatus(false);
+                                onStatusUpdated?.();
                                 navigate("/dashboard");
-                                window.location.reload();
                             }}
                             className="mx-auto inline-flex rounded-full bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300"
                         >

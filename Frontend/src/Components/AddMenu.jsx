@@ -6,7 +6,7 @@ const AddMenu = ({ onClose, onSaved }) => {
   const [form, setForm] = useState({
     name: '',
     price: '',
-    category: '',
+    category: 'Breakfast',
     image: '',
     type: 'veg',
     description: ''
@@ -58,8 +58,12 @@ const AddMenu = ({ onClose, onSaved }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!form.image) {
-      setError('Please upload an image first.')
+    const name = form.name.trim()
+    const description = form.description.trim()
+    const price = Number(form.price)
+
+    if (!name || !Number.isFinite(price) || price < 0 || !form.category || !form.image || !description) {
+      setError('Please complete all food fields with a valid price and image.')
       return
     }
 
@@ -70,12 +74,12 @@ const AddMenu = ({ onClose, onSaved }) => {
       await axios.post(
         `${API_URL}/food/add`,
         {
-          name: form.name,
-          price: Number(form.price),
+          name,
+          price,
           category: form.category,
           image: form.image,
           type: form.type,
-          description: form.description
+          description
         },
         {
           headers: {
@@ -87,7 +91,7 @@ const AddMenu = ({ onClose, onSaved }) => {
       onClose && onClose()
     }
     catch (err) {
-      setError(err.message || 'Failed to add food')
+      setError(err.response?.data?.message || err.message || 'Failed to add food')
     }
     finally {
       setSaving(false)
@@ -101,12 +105,12 @@ const AddMenu = ({ onClose, onSaved }) => {
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
             <label className="block text-sm font-medium text-gray-700">Name</label>
-            <input name="name" value={form.name} onChange={handleChange} className="mt-1 block w-full border rounded p-2" />
+            <input name="name" value={form.name} onChange={handleChange} required minLength={3} maxLength={30} className="mt-1 block w-full border rounded p-2" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-700">Price</label>
-              <input name="price" type="number" value={form.price} onChange={handleChange} className="mt-1 block w-full border rounded p-2" />
+              <input name="price" type="number" min="0" step="0.01" value={form.price} onChange={handleChange} required className="mt-1 block w-full border rounded p-2" />
             </div>
             <div>
               <label className='block text-sm font-medium text-gray-700'>Category</label>
@@ -122,7 +126,7 @@ const AddMenu = ({ onClose, onSaved }) => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Image</label>
-            <input type='file' name="image" accept='image/*' onChange={handleImageChange} className="mt-1 block w-full border rounded p-2" />
+            <input type='file' name="image" accept='image/*' onChange={handleImageChange} required={!form.image} disabled={uploadingImage || saving} className="mt-1 block w-full border rounded p-2" />
             {uploadingImage && <p className="mt-1 text-xs text-orange-600">Uploading image...</p>}
             {form.image && (
               <img src={form.image} alt="Preview" className="mt-2 h-20 w-20 rounded object-cover border" />
@@ -137,15 +141,15 @@ const AddMenu = ({ onClose, onSaved }) => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Description</label>
-            <textarea name="description" value={form.description} onChange={handleChange} className="mt-1 block w-full border rounded p-2" rows={3} />
+            <textarea name="description" value={form.description} onChange={handleChange} required className="mt-1 block w-full border rounded p-2" rows={3} />
           </div>
 
           {error && <div className="text-sm text-red-600">{error}</div>}
 
           <div className="flex justify-end gap-3">
             <button type="button" onClick={onClose} className="px-4 py-2 rounded border">Cancel</button>
-            <button type="submit" disabled={saving} className="px-4 py-2 rounded bg-orange-500 text-white">
-              {saving ? 'Adding...' : 'Add Food'}
+            <button type="submit" disabled={saving || uploadingImage} className="px-4 py-2 rounded bg-orange-500 text-white">
+              {uploadingImage ? 'Uploading...' : saving ? 'Adding...' : 'Add Food'}
             </button>
           </div>
         </form>

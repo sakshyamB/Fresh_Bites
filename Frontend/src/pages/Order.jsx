@@ -21,6 +21,7 @@ const Order = () => {
   const [logoutpopup, setlogoutpopup] = useState(false);
   const [openOrderStatus, setopenOrderStatus] = useState(false);
   const [selectedOrderId, setselectedOrderId] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const fetchAllOrders = async () => {
@@ -45,7 +46,11 @@ const Order = () => {
     };
 
     fetchAllOrders();
-  }, []);
+  }, [API_URL, refreshKey]);
+
+  const refreshOrders = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-orange-50 text-slate-900">
@@ -54,7 +59,6 @@ const Order = () => {
 
       <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
 
-        {/* PAGE HEADER */}
         <div className="mb-5 rounded-3xl border border-orange-100 bg-white/90 p-5 shadow-sm backdrop-blur-sm">
 
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-600">
@@ -80,21 +84,18 @@ const Order = () => {
           </div>
         </div>
 
-        {/* LOADING */}
         {loading && (
           <div className="grid min-h-[40vh] place-items-center rounded-[2rem] border border-dashed border-orange-200 bg-white p-10 text-slate-500 shadow-sm">
             Loading orders...
           </div>
         )}
 
-        {/* ERROR */}
         {!loading && error && (
           <div className="rounded-[2rem] border border-red-200 bg-white p-10 text-center text-red-500 shadow-sm">
             {error}
           </div>
         )}
 
-        {/* NO ORDERS */}
         {!loading && !error && !orders.length && (
           <div className="rounded-[2rem] border border-slate-200 bg-white p-10 text-center shadow-sm">
             <h2 className="text-2xl font-bold text-slate-900">
@@ -107,7 +108,6 @@ const Order = () => {
           </div>
         )}
 
-        {/* ORDERS */}
         {!loading && !error && orders.length > 0 && (
           <div className="grid gap-5 lg:grid-cols-2">
 
@@ -118,7 +118,6 @@ const Order = () => {
                 className="overflow-hidden rounded-[1.5rem] border border-orange-100 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-lg"
               >
 
-                {/* HEADER */}
                 <div className="border-b border-orange-100 bg-gradient-to-r from-orange-50 via-white to-orange-50 p-4">
 
                   <div className="flex items-start justify-between gap-3">
@@ -179,7 +178,6 @@ const Order = () => {
 
                 </div>
 
-                {/* DELIVERY + PAYMENT */}
                 <div className="grid grid-cols-2 gap-3 p-4">
 
                   <div className="rounded-2xl bg-[#fff7eb] p-3 ring-1 ring-orange-50">
@@ -208,7 +206,6 @@ const Order = () => {
 
                 </div>
 
-                {/* PRICE SUMMARY */}
                 <div className="mx-4 mb-4 grid grid-cols-3 gap-2 rounded-2xl bg-orange-50 p-2">
 
                   <div className="rounded-xl bg-white p-2.5">
@@ -243,7 +240,6 @@ const Order = () => {
 
                 </div>
 
-                {/* CANCELLED MESSAGE */}
                 {order.status?.toLowerCase() === "cancelled" && (
 
                   <div className="mx-4 mb-4 rounded-2xl border border-rose-100 bg-rose-50 p-3 text-xs text-rose-700">
@@ -253,7 +249,6 @@ const Order = () => {
 
                 )}
 
-                {/* ITEMS */}
                 <div className="border-t border-slate-100 p-4">
 
                   <div className="mb-2 flex items-center justify-between">
@@ -335,6 +330,7 @@ const Order = () => {
         <StatusUpdate
           setopenOrderStatus={setopenOrderStatus}
           orderId={selectedOrderId}
+          onStatusUpdated={refreshOrders}
         />
       )}
 

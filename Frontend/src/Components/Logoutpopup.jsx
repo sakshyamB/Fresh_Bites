@@ -11,7 +11,7 @@ const Logoutpopup = ({ setLogoutpopup, setprofile }) => {
     if (typeof setprofile === "function") {
       setprofile(false)
     }
-    navigate('/login')
+    navigate('/login', { replace: true })
   }
 
   return (
